@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, Truck, Users, Wrench, Fuel, BarChart3, Settings, Navigation
 } from 'lucide-react';
@@ -8,20 +8,19 @@ import { supabase } from '../utils/supabase';
 // Import modular components
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
-import FleetView from '../components/FleetView';
+import TripsView from '../components/TripsView';
 
-export default function Fleet() {
+export default function Trips() {
   const navigate = useNavigate();
-  const location = useLocation();
 
   // Layout states
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  
+
   // Interactive UI states
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  
+
   // Notification states
   const [notifications, setNotifications] = useState([
     { id: 1, type: 'warning', text: 'Vehicle Cascadia #104 fuel level below 15%', time: '10m ago', unread: true },
@@ -44,13 +43,13 @@ export default function Fleet() {
   const handleMenuClick = (tabName) => {
     if (tabName === 'Dashboard') {
       navigate('/dashboard');
+    } else if (tabName === 'Fleet') {
+      navigate('/fleet');
     } else if (tabName === 'Drivers') {
       navigate('/drivers');
-    } else if (tabName === 'Trips') {
-      navigate('/trips');
     } else if (tabName === 'Maintenance') {
       navigate('/maintenance');
-    } else if (tabName !== 'Fleet') {
+    } else if (tabName !== 'Trips') {
       // Navigate to dashboard and trigger that tab view
       navigate('/dashboard', { state: { activeTab: tabName } });
     }
@@ -79,7 +78,7 @@ export default function Fleet() {
         setIsSidebarCollapsed={setIsSidebarCollapsed}
         isMobileSidebarOpen={isMobileSidebarOpen}
         setIsMobileSidebarOpen={setIsMobileSidebarOpen}
-        activeMenuTab="Fleet"
+        activeMenuTab="Trips"
         setActiveMenuTab={handleMenuClick}
         handleLogout={handleLogout}
         menuItems={menuItems}
@@ -101,15 +100,15 @@ export default function Fleet() {
           markAllNotificationsRead={markAllNotificationsRead}
           deleteNotification={deleteNotification}
           handleLogout={handleLogout}
-          onAddTrip={() => navigate('/dashboard')} // quick action bypass
+          onAddTrip={() => {}} // already on dispatcher
           setActiveMenuTab={handleMenuClick}
         />
 
         {/* ACTIVE MAIN ROUTE CONTAINER */}
         <main className="flex-1 p-4 md:p-8 space-y-6 overflow-y-auto max-w-[1600px] mx-auto w-full">
           
-          {/* VEHICLE REGISTRY PANEL */}
-          <FleetView />
+          {/* TRIP DISPATCH PANEL */}
+          <TripsView />
 
         </main>
       </div>

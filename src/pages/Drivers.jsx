@@ -45,6 +45,10 @@ export default function Drivers() {
       navigate('/dashboard');
     } else if (tabName === 'Fleet') {
       navigate('/fleet');
+    } else if (tabName === 'Trips') {
+      navigate('/trips');
+    } else if (tabName === 'Maintenance') {
+      navigate('/maintenance');
     } else if (tabName !== 'Drivers') {
       // Navigate to dashboard and trigger that tab view
       navigate('/dashboard', { state: { activeTab: tabName } });
