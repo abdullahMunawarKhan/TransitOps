@@ -36,6 +36,10 @@ export default function Dashboard() {
       navigate('/fleet');
     } else if (tabName === 'Drivers') {
       navigate('/drivers');
+    } else if (tabName === 'Trips') {
+      navigate('/trips');
+    } else if (tabName === 'Maintenance') {
+      navigate('/maintenance');
     } else {
       setActiveMenuTab(tabName);
     }
