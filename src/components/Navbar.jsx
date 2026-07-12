@@ -2,6 +2,36 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Bell, Plus, ChevronDown, Settings, LogOut, X, AlertTriangle, XCircle, Activity, Menu } from 'lucide-react';
 
+// Helper to get user from localStorage
+const getCurrentUser = () => {
+  try {
+    const authToken = localStorage.getItem('supabase.auth.token');
+    if (!authToken) return null;
+    const parsed = JSON.parse(authToken);
+    return parsed?.currentSession?.user || null;
+  } catch (e) {
+    return null;
+  }
+};
+
+// Helper to get role display name
+const getRoleDisplayName = (role) => {
+  switch (role) {
+    case 'admin':
+      return 'Admin';
+    case 'fleet':
+      return 'Fleet Manager';
+    case 'dispatcher':
+      return 'Dispatcher';
+    case 'safety_officer':
+      return 'Safety Officer';
+    case 'financial_analyst':
+      return 'Financial Analyst';
+    default:
+      return 'User';
+  }
+};
+
 export default function Navbar({
   searchQuery,
   setSearchQuery,
@@ -17,6 +47,8 @@ export default function Navbar({
   onAddTrip,
   setActiveMenuTab
 }) {
+  const currentUser = getCurrentUser();
+  
   return (
     <header className="h-16 bg-white border-b border-[#E5E7EB] sticky top-0 flex items-center px-4 md:px-8 justify-between z-20">
       
@@ -53,7 +85,7 @@ export default function Navbar({
       <div className="flex items-center gap-3 md:gap-4 ml-4">
         
         {/* Quick Actions Button */}
-        <div className="relative">
+        {/* <div className="relative">
           <button 
             onClick={onAddTrip}
             className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-[#2563EB] hover:bg-blue-700 rounded-lg shadow-sm transition outline-none"
@@ -61,7 +93,7 @@ export default function Navbar({
             <Plus size={14} />
             <span className="hidden sm:inline">Add Trip</span>
           </button>
-        </div>
+        </div> */}
 
         {/* Notification Bell with Dropdown */}
         <div className="relative">
@@ -157,9 +189,9 @@ export default function Navbar({
             </div>
             
             <div className="hidden lg:block">
-              <div className="text-xs font-semibold text-slate-900 leading-none mb-0.5">Alex Mercer</div>
+              <div className="text-xs font-semibold text-slate-900 leading-none mb-0.5">{currentUser?.name || 'User'}</div>
               <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                Fleet Manager
+                {getRoleDisplayName(currentUser?.role)}
               </span>
             </div>
             <ChevronDown size={14} className="text-slate-400 hidden sm:block" />
@@ -178,7 +210,7 @@ export default function Navbar({
                 >
                   <div className="px-3.5 py-2.5 border-b border-[#E5E7EB]">
                     <span className="block text-xs text-slate-400 font-medium">Logged in as</span>
-                    <span className="block text-xs font-semibold text-slate-800">alex.mercer@transitops.com</span>
+                    <span className="block text-xs font-semibold text-slate-800">{currentUser?.email || 'user@transitops.com'}</span>
                   </div>
                   <button 
                     onClick={() => {

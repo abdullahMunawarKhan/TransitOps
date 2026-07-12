@@ -16,7 +16,7 @@ import UpdatePassword from './pages/UpdatePassword';
 import SftyOfcrDashboard from './pages/dashboards/SftyOfcrDashboard';
 import FinclAnystDashboard from './pages/dashboards/FinclAnystDashboard';
 
-import TopPanel from './components/TopPanel';
+
 
 // Helper to get user from localStorage
 const getCurrentUser = () => {
@@ -79,9 +79,8 @@ function App() {
 
   return (
     <div className="relative min-h-screen bg-slate-50 text-gray-900 font-sans">
-      {!isWelcomePage && !isDashboardPage && <TopPanel />}
-      <main className={isWelcomePage || isDashboardPage ? "p-0" : "p-4 min-h-[calc(100vh-64px)]"}>
-        <div className={isWelcomePage || isDashboardPage ? "w-full" : "w-full max-w-7xl mx-auto"}>
+      <main className="p-0 min-h-screen">
+        <div className="w-full">
           <Routes>
             <Route path="/" element={<Welcome />} />
             <Route path="/dashboard" element={<Dashboard />} />

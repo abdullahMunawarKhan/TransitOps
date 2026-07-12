@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { Eye, EyeOff, Truck, ShieldAlert, Zap, TrendingUp } from 'lucide-react';
 
 // Static credentials
 const staticUsers = [
@@ -16,7 +17,6 @@ function Login() {
   const [errorEmail, setErrorEmail] = useState('');
   const [errorPassword, setErrorPassword] = useState('');
   const [loginError, setLoginError] = useState('');
-  const [resetStatus, setResetStatus] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -86,260 +86,211 @@ function Login() {
     setIsLoading(false);
   };
 
-  // const handleResetPassword = async () => {
-  //   setResetStatus('');
-  //   setIsSending(true);
-
-  //   if (!email) {
-  //     setResetStatus('⚠ Please enter your email first.');
-  //     setIsSending(false);
-  //     return;
-  //   }
-
-  //   if (!isValidEmail(email)) {
-  //     setResetStatus('⚠ Please enter a valid email address.');
-  //     setIsSending(false);
-  //     return;
-  //   }
-
-  //   try {
-  //     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-  //       redirectTo: `/update-password`,
-  //     });
-
-  //     if (error) {
-  //       if (
-  //         error.message.toLowerCase().includes('user') ||
-  //         error.message.toLowerCase().includes('invalid')
-  //       ) {
-  //         setResetStatus('❌ Account not found with this email.');
-  //       } else {
-  //         setResetStatus('❌ Failed to send reset email. Try again.');
-  //       }
-  //     } else {
-  //       setResetStatus('✅ Check your email to reset your password.');
-  //     }
-  //   } catch (error) {
-  //     setResetStatus('❌ An unexpected error occurred. Please try again.');
-  //   } finally {
-  //     setIsSending(false);
-  //   }
-  // };
-
-  // Auto-dismiss reset alert
-  useEffect(() => {
-    if (resetStatus) {
-      const timer = setTimeout(() => setResetStatus(''), 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [resetStatus]);
+  const features = [
+    { icon: Zap, title: 'Real-time Updates', desc: 'Live fleet status and trip tracking' },
+    { icon: ShieldAlert, title: 'Secure Access', desc: 'Role-based permissions and authentication' },
+    { icon: TrendingUp, title: 'Powerful Analytics', desc: 'Comprehensive reports and insights' }
+  ];
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 px-4 sm:px-6 lg:px-8 py-12">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-        <div className="absolute top-40 left-40 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
-      </div>
-
-      <div className="relative z-10 w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center space-x-3 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-violet-600 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h21a1 1 0 0 0 1-1V11a2 2 0 0 0-2-2h-6"/></svg>
-            </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-              TransitOps
-            </h1>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-          <p className="text-gray-600">Sign in to continue</p>
-        </div>
-
-        {/* Login Form */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8">
-          <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className="space-y-6">
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
-              </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                className="w-full px-4 py-3 rounded-xl bg-white/70 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                aria-describedby={errorEmail ? "email-error" : undefined}
-              />
-              {errorEmail && (
-                <p id="email-error" className="text-red-500 text-sm mt-1 flex items-center">
-                  <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                  {errorEmail}
-                </p>
-              )}
-            </div>
-
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter your password"
-                  className="w-full px-4 py-3 pr-12 rounded-xl bg-white/70 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  aria-describedby={errorPassword ? "password-error" : undefined}
-                />
-                <button
-                  type="button"
-                  className="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
-                </button>
-              </div>
-              {errorPassword && (
-                <p id="password-error" className="text-red-500 text-sm mt-1 flex items-center">
-                  <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                  {errorPassword}
-                </p>
-              )}
-            </div>
-
-            {/* Error Message */}
-            {loginError && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-                <p className="text-red-600 text-sm flex items-center">
-                  <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                  {loginError}
-                </p>
-              </div>
-            )}
-
-            {/* Login Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-[#2563EB] text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+    <div className="min-h-screen flex bg-[#F8FAFC]">
+      {/* Left Side - Form */}
+      <div className="flex-1 flex items-center justify-center p-4 md:p-6">
+        <div className="w-full max-w-md">
+          <div className="mb-6">
+            <button 
+              onClick={() => navigate('/')}
+              className="inline-flex items-center gap-1.5 text-xs text-[#6B7280] hover:text-[#2563EB] transition mb-4"
             >
-              {isLoading ? (
-                <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Signing In...
-                </div>
-              ) : (
-                'Sign In'
-              )}
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to Home
             </button>
+            
+            <h1 className="text-xl font-bold text-[#111827] mb-1.5">
+              Welcome Back
+            </h1>
+            <p className="text-sm text-[#6B7280]">
+              Sign in to your TransitOps account
+            </p>
+          </div>
 
-            {/* Forgot Password */}
-            {/* <div className="text-center">
+          {/* Login Form */}
+          <div className="space-y-4">
+            <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className="space-y-3.5">
+              {/* Email */}
+              <div>
+                <label htmlFor="email" className="block text-xs font-medium text-[#374151] mb-1.5">
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="you@company.com"
+                  className="w-full px-3 py-2.5 rounded-lg bg-white border border-[#E5E7EB] focus:outline-none focus:ring-1.5 focus:ring-[#2563EB] focus:border-transparent transition-all duration-200 text-sm"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  aria-describedby={errorEmail ? "email-error" : undefined}
+                />
+                {errorEmail && (
+                  <p id="email-error" className="text-red-500 text-xs mt-1.5 flex items-center">
+                    <svg className="w-3.5 h-3.5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    {errorEmail}
+                  </p>
+                )}
+              </div>
+
+              {/* Password */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label htmlFor="password" className="block text-xs font-medium text-[#374151]">
+                    Password
+                  </label>
+                </div>
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Enter your password"
+                    className="w-full px-3 py-2.5 pr-9 rounded-lg bg-white border border-[#E5E7EB] focus:outline-none focus:ring-1.5 focus:ring-[#2563EB] focus:border-transparent transition-all duration-200 text-sm"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    aria-describedby={errorPassword ? "password-error" : undefined}
+                  />
+                  <button
+                    type="button"
+                    className="absolute top-1/2 right-3 transform -translate-y-1/2 text-[#9CA3AF] hover:text-[#6B7280] transition-colors"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                {errorPassword && (
+                  <p id="password-error" className="text-red-500 text-xs mt-1.5 flex items-center">
+                    <svg className="w-3.5 h-3.5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    {errorPassword}
+                  </p>
+                )}
+              </div>
+
+              {/* Error Message */}
+              {loginError && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-2.5">
+                  <p className="text-red-600 text-xs flex items-center">
+                    <svg className="w-3.5 h-3.5 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    {loginError}
+                  </p>
+                </div>
+              )}
+
+              {/* Login Button */}
               <button
-                type="button"
-                onClick={() => setShowForgotModal(true)}
-                className="text-sm text-purple-600 hover:text-purple-800 underline transition-colors"
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-[#2563EB] text-white py-2.5 rounded-lg font-semibold hover:bg-blue-700 transform hover:scale-[1.01] transition-all duration-200 shadow-sm hover:shadow-blue-500/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm"
               >
-                Forgot Password?
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-1.5"></div>
+                    Signing In...
+                  </div>
+                ) : (
+                  'Sign In'
+                )}
               </button>
-            </div> */}
+            </form>
+
+            {/* Demo Credentials */}
+            <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
+              <p className="text-[10px] font-semibold text-[#2563EB] mb-2">Demo Credentials</p>
+              <div className="space-y-1 text-[10px] text-[#374151]">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-medium">Admin:</span>
+                  <span>admin@gmail.com / password</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-medium">Fleet:</span>
+                  <span>fleet@gmail.com / password</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-medium">Dispatcher:</span>
+                  <span>dispatcher@gmail.com / password</span>
+                </div>
+              </div>
+            </div>
 
             {/* Sign Up */}
-            <div className="text-center pt-4 border-t border-gray-200">
-              <p className="text-sm text-gray-600">
+            <div className="text-center pt-3">
+              <p className="text-xs text-[#6B7280]">
                 Don't have an account?{' '}
                 <button
                   type="button"
                   onClick={() => navigate('/signup')}
-                  className="text-blue-600 hover:text-blue-800 font-medium underline transition-colors"
+                  className="text-[#2563EB] hover:text-blue-700 font-semibold transition-colors"
                 >
-                  Sign up here
+                  Create an account
                 </button>
               </p>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      {/* Forgot Password Modal */}
-      {/* {showForgotModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md relative animate-fade-in-down">
-            <button
-              aria-label="Close reset password modal"
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-              onClick={() => {
-                setShowForgotModal(false);
-                setResetStatus('');
-              }}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-
-            <div className="p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Reset Your Password</h3>
-              <p className="text-gray-600 mb-6">
-                Enter your registered email. We'll send you a link to reset your password.
-              </p>
-
-              <div className="space-y-4">
-                <input
-                  type="email"
-                  placeholder="Enter your email address"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-
-                <button
-                  onClick={handleResetPassword}
-                  disabled={!email || isSending}
-                  className="w-full bg-purple-600 text-white py-3 rounded-xl font-semibold hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSending ? (
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Sending...
-                    </div>
-                  ) : (
-                    'Send Reset Link'
-                  )}
-                </button>
-
-                {resetStatus && (
-                  <div
-                    className={`px-4 py-3 rounded-xl text-sm ${
-                      resetStatus.startsWith('✅')
-                        ? 'bg-green-50 text-green-700 border border-green-200'
-                        : 'bg-red-50 text-red-700 border border-red-200'
-                    }`}
-                  >
-                    {resetStatus}
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         </div>
-      )} */}
+      </div>
+
+      {/* Right Side - Branding */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#2563EB] to-indigo-600 text-white p-8 flex-col justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-9 h-9 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
+            <Truck className="h-4.5 w-4.5 text-white" />
+          </div>
+          <div>
+            <h2 className="text-base font-bold">TransitOps</h2>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-xl font-bold mb-2.5">
+              Streamline Your Fleet Operations
+            </h3>
+            <p className="text-blue-100 text-sm">
+              Manage vehicles, drivers, trips, and maintenance with a single, powerful platform.
+            </p>
+          </div>
+
+          <div className="space-y-2.5">
+            {features.map((feature, index) => (
+              <div key={index} className="flex items-start gap-3 p-3 bg-white/10 backdrop-blur-sm rounded-lg">
+                <div className="w-8 h-8 rounded-md bg-white/20 flex items-center justify-center flex-shrink-0">
+                  <feature.icon className="h-4 w-4 text-white" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-white text-sm">
+                    {feature.title}
+                  </h4>
+                  <p className="text-blue-100 text-xs">
+                    {feature.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="text-xs text-blue-200">
+          © 2026 TransitOps. All rights reserved.
+        </div>
+      </div>
     </div>
   );
 }
 
 export default Login;
+
