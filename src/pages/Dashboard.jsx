@@ -34,6 +34,8 @@ export default function Dashboard() {
   const handleMenuTabChange = (tabName) => {
     if (tabName === 'Fleet') {
       navigate('/fleet');
+    } else if (tabName === 'Drivers') {
+      navigate('/drivers');
     } else {
       setActiveMenuTab(tabName);
     }
