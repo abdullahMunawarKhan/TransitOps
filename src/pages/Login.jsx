@@ -71,6 +71,10 @@ function Login() {
           navigate('/fleet-dashboard');
         } else if (user.role === 'dispatcher') {
           navigate('/dispatcher-dashboard');
+        } else if (user.role === 'safety_officer') {
+          navigate('/safety-dashboard');
+        } else if (user.role === 'financial_analyst') {
+          navigate('/finance-dashboard');
         } else {
           navigate('/dashboard');
         }

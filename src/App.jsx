@@ -13,6 +13,8 @@ import Fuel from './pages/Fuel';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import UpdatePassword from './pages/UpdatePassword';
+import SftyOfcrDashboard from './pages/dashboards/SftyOfcrDashboard';
+import FinclAnystDashboard from './pages/dashboards/FinclAnystDashboard';
 
 import TopPanel from './components/TopPanel';
 
@@ -40,6 +42,8 @@ function App() {
     location.pathname === '/admin-dashboard' || 
     location.pathname === '/fleet-dashboard' || 
     location.pathname === '/dispatcher-dashboard' || 
+    location.pathname === '/safety-dashboard' || 
+    location.pathname === '/finance-dashboard' || 
     location.pathname === '/fleet' || 
     location.pathname === '/drivers' || 
     location.pathname === '/trips' || 
@@ -57,6 +61,10 @@ function App() {
           navigate('/fleet-dashboard', { replace: true });
         } else if (currentUser.role === 'dispatcher') {
           navigate('/dispatcher-dashboard', { replace: true });
+        } else if (currentUser.role === 'safety_officer') {
+          navigate('/safety-dashboard', { replace: true });
+        } else if (currentUser.role === 'financial_analyst') {
+          navigate('/finance-dashboard', { replace: true });
         } else {
           navigate('/dashboard', { replace: true });
         }
@@ -80,6 +88,8 @@ function App() {
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/fleet-dashboard" element={<FleetDashboard />} />
             <Route path="/dispatcher-dashboard" element={<DispatcherDashboard />} />
+            <Route path="/safety-dashboard" element={<SftyOfcrDashboard />} />
+            <Route path="/finance-dashboard" element={<FinclAnystDashboard />} />
             <Route path="/fleet" element={<Fleet />} />
             <Route path="/drivers" element={<Drivers />} />
             <Route path="/trips" element={<Trips />} />

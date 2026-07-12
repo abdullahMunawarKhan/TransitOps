@@ -162,6 +162,8 @@ function Signup() {
                 <option value="">Select your role</option>
                 <option value="fleet">Fleet Manager</option>
                 <option value="dispatcher">Dispatcher</option>
+                <option value="safety_officer">Safety Officer</option>
+                <option value="financial_analyst">Financial Analyst</option>
               </select>
             </div>
 

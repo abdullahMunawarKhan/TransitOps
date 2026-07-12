@@ -257,6 +257,26 @@ export default function TripsView() {
     setActiveTrips([newTrip, ...activeTrips]);
     setStepperStage('Dispatched');
 
+    // Sync vehicle status to 'On Trip'
+    const storedVehicles = JSON.parse(localStorage.getItem('transitops.vehicles') || '[]');
+    const newVehicles = storedVehicles.map(v => {
+      if (v.name === selectedVehicle) {
+        return { ...v, status: 'On Trip' };
+      }
+      return v;
+    });
+    localStorage.setItem('transitops.vehicles', JSON.stringify(newVehicles));
+
+    // Sync driver status to 'On Trip'
+    const storedDrivers = JSON.parse(localStorage.getItem('transitops.drivers') || '[]');
+    const newDrivers = storedDrivers.map(d => {
+      if (d.name === selectedDriver) {
+        return { ...d, status: 'On Trip', currentVehicle: selectedVehicle };
+      }
+      return d;
+    });
+    localStorage.setItem('transitops.drivers', JSON.stringify(newDrivers));
+
     // Reset inputs
     setFormSource('');
     setFormDest('');
