@@ -4,6 +4,7 @@ import {
   X, Wrench, ShieldAlert, Calendar, DollarSign, User, Activity, 
   MapPin, Compass, ArrowUpRight, CheckCircle2, FileText, ClipboardList
 } from 'lucide-react';
+import { formatCurrency, parseCurrency } from '../utils/parsers';
 
 export default function MaintenanceDrawer({ record, onClose }) {
   if (!record) return null;
@@ -134,12 +135,12 @@ export default function MaintenanceDrawer({ record, onClose }) {
                 <div className="p-3.5 border border-[#E2E8F0] rounded-xl bg-slate-50/20 text-xs space-y-1.5">
                   <div className="flex items-center justify-between">
                     <span className="text-[#64748B]">Estimated Budget Cost:</span>
-                    <span className="font-semibold font-mono text-slate-800">${record.estimatedCost.toLocaleString()}</span>
+                    <span className="font-semibold font-mono text-slate-800">{formatCurrency(parseCurrency(record.estimatedCost))}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[#64748B]">Actual Service Cost:</span>
                     <span className="font-bold font-mono text-slate-900">
-                      {record.actualCost ? `$${record.actualCost.toLocaleString()}` : 'TBD (In Progress)'}
+                      {record.actualCost ? formatCurrency(parseCurrency(record.actualCost)) : 'TBD (In Progress)'}
                     </span>
                   </div>
                 </div>

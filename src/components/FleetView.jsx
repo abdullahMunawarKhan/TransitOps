@@ -722,7 +722,7 @@ export default function FleetView() {
                     <input
                       type="text"
                       required
-                      placeholder="$120,000"
+                      placeholder="₹1,20,000"
                       value={formCost}
                       onChange={(e) => setFormCost(e.target.value)}
                       className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl py-2 px-2.5 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -863,7 +863,7 @@ export default function FleetView() {
                     <input
                       type="text"
                       required
-                      placeholder="$145,000"
+                      placeholder="₹1,45,000"
                       value={formCost}
                       onChange={(e) => setFormCost(e.target.value)}
                       className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl py-2 px-2.5 focus:outline-none focus:ring-1 focus:ring-blue-500"

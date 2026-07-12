@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Fuel, Wrench, DollarSign, Plus, Filter, Navigation, FileText } from 'lucide-react';
 import StatCard from './StatCard';
+import { formatCurrency, parseCurrency } from '../utils/parsers';
 
 const parseAmt = (str) => {
   if (typeof str === 'number') return str;
@@ -59,10 +60,10 @@ export default function FuelExpensesView() {
     });
 
     return {
-      totalFuel: `$${totalFuelCost.toLocaleString()}`,
-      avgFuelCost: totalFuelAmount ? `$${(totalFuelCost / totalFuelAmount).toFixed(2)}/unit` : '$0',
-      totalMaint: `$${totalMaintenance.toLocaleString()}`,
-      totalTolls: `$${totalTolls.toLocaleString()}`
+      totalFuel: formatCurrency(totalFuelCost),
+      avgFuelCost: totalFuelAmount ? `${formatCurrency(totalFuelCost / totalFuelAmount)}/unit` : formatCurrency(0),
+      totalMaint: formatCurrency(totalMaintenance),
+      totalTolls: formatCurrency(totalTolls)
     };
   }, [vehicles]);
 
@@ -206,7 +207,7 @@ export default function FuelExpensesView() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-slate-600 truncate max-w-[200px]">{log.details}</td>
-                  <td className="px-6 py-4 font-bold text-slate-800 text-right">{log.amount}</td>
+                  <td className="px-6 py-4 font-bold text-slate-800 text-right">{formatCurrency(parseCurrency(log.amount))}</td>
                 </tr>
               ))}
             </tbody>
@@ -298,7 +299,7 @@ export default function FuelExpensesView() {
               )}
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Total Cost ($)</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Total Cost (₹)</label>
                 <input 
                   type="number" 
                   required 

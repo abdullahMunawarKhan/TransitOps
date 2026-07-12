@@ -264,7 +264,7 @@ export default function TripDetailDrawer({
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Fuel Cost ($)</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1.5 uppercase">Fuel Cost (₹)</label>
                 <input 
                   type="number" 
                   step="0.01"

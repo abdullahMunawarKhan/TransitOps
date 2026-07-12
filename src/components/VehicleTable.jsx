@@ -4,6 +4,7 @@ import {
   CheckCircle2, Navigation, Wrench, AlertTriangle, 
   Trash2, Edit, Calendar, History, Eye
 } from 'lucide-react';
+import { formatCurrency, parseCurrency } from '../utils/parsers';
 
 export const getOperationalCost = (vehicle) => {
   const parseAmt = (val) => {
@@ -238,12 +239,12 @@ export default function VehicleTable({
                     
                     {/* Cost */}
                     <td className="py-3.5 px-5 text-[#111827] font-medium font-mono">
-                      {vehicle.cost}
+                      {formatCurrency(parseCurrency(vehicle.cost))}
                     </td>
 
                     {/* Operational Cost */}
                     <td className="py-3.5 px-5 text-emerald-600 font-bold font-mono">
-                      ${opsCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {formatCurrency(opsCost)}
                     </td>
                     
                     {/* Status badge pill */}

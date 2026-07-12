@@ -4,6 +4,7 @@ import {
   X, Info, Wrench, Fuel, Navigation, Shield, User, 
   TrendingUp, Calendar, Compass, ShieldAlert, Sparkles, Activity
 } from 'lucide-react';
+import { formatCurrency, parseCurrency } from '../utils/parsers';
 
 export default function VehicleDrawer({ vehicle, onClose }) {
   if (!vehicle) return null;
@@ -134,7 +135,7 @@ export default function VehicleDrawer({ vehicle, onClose }) {
                 </div>
                 <div className="p-3 border border-[#E2E8F0] rounded-xl bg-slate-50/10">
                   <span className="block text-[9px] text-[#64748B] uppercase font-bold tracking-wider">Acquisition Cost</span>
-                  <span className="text-sm font-bold text-[#111827] font-mono mt-0.5 block">{vehicle.cost}</span>
+                  <span className="text-sm font-bold text-[#111827] font-mono mt-0.5 block">{formatCurrency(parseCurrency(vehicle.cost))}</span>
                 </div>
                 <div className="p-3 border border-[#E2E8F0] rounded-xl bg-slate-50/10">
                   <span className="block text-[9px] text-[#64748B] uppercase font-bold tracking-wider">Max Load Capacity</span>
@@ -205,19 +206,19 @@ export default function VehicleDrawer({ vehicle, onClose }) {
                 <div className="p-3.5 border border-[#E2E8F0] rounded-xl bg-slate-50/20 text-xs space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-[#64748B]">Fuel/Charging Expenses:</span>
-                    <span className="font-semibold text-slate-800 font-mono">${fuelTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                    <span className="font-semibold text-slate-800 font-mono">{formatCurrency(fuelTotal)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-[#64748B]">Maintenance Expenses:</span>
-                    <span className="font-semibold text-slate-800 font-mono">${maintTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                    <span className="font-semibold text-slate-800 font-mono">{formatCurrency(maintTotal)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-[#64748B]">Tolls & Other Expenses:</span>
-                    <span className="font-semibold text-slate-800 font-mono">${otherTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                    <span className="font-semibold text-slate-800 font-mono">{formatCurrency(otherTotal)}</span>
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t border-slate-200">
                     <span className="font-bold text-slate-900">Total Operational Cost:</span>
-                    <span className="font-extrabold text-emerald-600 font-mono text-sm">${grandTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                    <span className="font-extrabold text-emerald-600 font-mono text-sm">{formatCurrency(grandTotal)}</span>
                   </div>
                 </div>
               </div>
@@ -234,7 +235,7 @@ export default function VehicleDrawer({ vehicle, onClose }) {
                       <div key={idx} className={`py-2 ${idx === 0 ? 'pt-0' : ''} ${idx === vehicle.maintenanceLogs.length - 1 ? 'pb-0' : ''}`}>
                         <div className="flex justify-between font-semibold text-[#111827]">
                           <span>{log.type}</span>
-                          <span className="font-mono text-slate-500">{log.cost}</span>
+                          <span className="font-mono text-slate-500">{formatCurrency(parseCurrency(log.cost))}</span>
                         </div>
                         <div className="text-[10px] text-[#64748B] mt-0.5 flex justify-between">
                           <span>{log.description}</span>

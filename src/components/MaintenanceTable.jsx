@@ -3,6 +3,7 @@ import {
   ArrowUpDown, ChevronLeft, ChevronRight, MoreVertical, 
   Wrench, Play, CheckCircle2, XCircle, Eye, Calendar, DollarSign, Trash2, ArrowUpRight
 } from 'lucide-react';
+import { formatCurrency, parseCurrency } from '../utils/parsers';
 
 export default function MaintenanceTable({
   records,
@@ -165,7 +166,7 @@ export default function MaintenanceTable({
 
                     {/* Cost */}
                     <td className="py-3.5 px-5 text-right font-bold text-slate-900 font-mono">
-                      ${cost.toLocaleString()}
+                      {formatCurrency(parseCurrency(cost))}
                     </td>
 
                     {/* Status badge */}

@@ -174,9 +174,9 @@ export default function TripsView() {
   const [aiRecs, setAiRecs] = useState({
     vehicle: 'Tesla Semi #401',
     driver: 'David Miller',
-    fuelCost: '$180',
-    profit: '$2,450',
-    savings: '$120 (Smart Dispatch)',
+    fuelCost: '₹180',
+    profit: '₹2,450',
+    savings: '₹120 (Smart Dispatch)',
     risk: 'Low (Safety Rating 92)'
   });
 
@@ -188,7 +188,7 @@ export default function TripsView() {
     cancelled: 1,
     pendingDispatch: stepperStage === 'Draft' && formSource && formDest ? 1 : 0,
     avgEta: '4.2h',
-    revenueToday: '$14,850',
+    revenueToday: '₹14,850',
     fleetAvailability: '46%'
   };
 
@@ -217,8 +217,8 @@ export default function TripsView() {
 
     // Update AI recommendations pairing dynamically
     if (vMatch && dMatch) {
-      const estimatedFuel = vMatch.type === 'Electric Truck' ? '$0 (EV)' : `$${Math.round(weightVal * 0.015 + 180)}`;
-      const estimatedProfit = `$${Math.round((parseFloat(formRevenue) || 1200) - (vMatch.type === 'Electric Truck' ? 20 : 250))}`;
+      const estimatedFuel = vMatch.type === 'Electric Truck' ? '₹0 (EV)' : `₹${Math.round(weightVal * 0.015 + 180)}`;
+      const estimatedProfit = `₹${Math.round((parseFloat(formRevenue) || 1200) - (vMatch.type === 'Electric Truck' ? 20 : 250))}`;
       const riskScore = dMatch.safetyScore >= 90 ? 'Low (Safety Rating ' + dMatch.safetyScore + ')' : 'Medium';
       
       setAiRecs({
@@ -226,7 +226,7 @@ export default function TripsView() {
         driver: dMatch.name,
         fuelCost: estimatedFuel,
         profit: estimatedProfit,
-        savings: vMatch.type === 'Electric Truck' ? '$280 (Zero Emission Routing)' : '$95 (Eco Pathing)',
+        savings: vMatch.type === 'Electric Truck' ? '₹280 (Zero Emission Routing)' : '₹95 (Eco Pathing)',
         risk: riskScore
       });
     }
@@ -370,7 +370,7 @@ export default function TripsView() {
         <div className="bg-white p-3.5 rounded-2xl border border-[#E2E8F0] shadow-sm flex flex-col justify-between hover:shadow-md transition">
           <span className="text-[9px] font-bold text-[#64748B] uppercase tracking-wider">Revenue Today</span>
           <h3 className="text-xl font-bold font-space text-slate-800 mt-2">{kpis.revenueToday}</h3>
-          <span className="text-[8px] text-emerald-600 font-semibold mt-1">+$2.8k vs target</span>
+          <span className="text-[8px] text-emerald-600 font-semibold mt-1">+₹2.8k vs target</span>
         </div>
 
         {/* KPI 8: Fleet Avail */}

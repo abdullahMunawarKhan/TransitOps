@@ -23,6 +23,10 @@ export default function Dashboard() {
         navigate('/fleet-dashboard', { replace: true });
       } else if (user.role === 'dispatcher') {
         navigate('/dispatcher-dashboard', { replace: true });
+      } else if (user.role === 'safety_officer') {
+        navigate('/safety-dashboard', { replace: true });
+      } else if (user.role === 'financial_analyst') {
+        navigate('/finance-dashboard', { replace: true });
       } else {
         navigate('/login', { replace: true });
       }

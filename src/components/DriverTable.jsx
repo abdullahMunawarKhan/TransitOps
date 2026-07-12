@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   ArrowUpDown, ChevronLeft, ChevronRight, MoreVertical, 
   CheckCircle2, Navigation, AlertTriangle, Play, RefreshCw,
-  Eye, Edit, Ban, Trash2, ShieldAlert, Phone
+  Eye, Edit, Ban, Trash2, ShieldAlert, Phone, ChevronUp, ChevronDown as ChevronDownIcon
 } from 'lucide-react';
 
 export default function DriverTable({
@@ -11,7 +11,12 @@ export default function DriverTable({
   onEditDriver,
   onAssignTrip,
   onSuspendDriver,
-  onDeleteDriver
+  onDeleteDriver,
+  // Optional Safety Officer extensions — default to false/null so existing
+  // Dispatcher and Admin usage is completely unaffected.
+  allowScoreEdit = false,
+  onUpdateScore = null,
+  hideActions = false,
 }) {
   const [sortField, setSortField] = useState('name');
   const [sortAsc, setSortAsc] = useState(true);
@@ -131,7 +136,7 @@ export default function DriverTable({
                 </button>
               </th>
               <th className="py-3.5 px-5 sticky top-0 bg-white">Status</th>
-              <th className="py-3.5 px-5 sticky top-0 bg-white text-right">Actions</th>
+              {!hideActions && <th className="py-3.5 px-5 sticky top-0 bg-white text-right">Actions</th>}
             </tr>
           </thead>
 
@@ -205,8 +210,8 @@ export default function DriverTable({
                       {driver.tripsCompleted}
                     </td>
 
-                    {/* Circular Safety Score Ring */}
-                    <td className="py-3.5 px-5">
+                    {/* Circular Safety Score Ring + optional +/- edit */}
+                    <td className="py-3.5 px-5" onClick={(e) => allowScoreEdit && e.stopPropagation()}>
                       <div className="flex items-center gap-2">
                         {/* SVG Mini Ring */}
                         <svg className="w-5 h-5" viewBox="0 0 36 36">
@@ -226,6 +231,24 @@ export default function DriverTable({
                         <span className={`font-bold font-space ${scoreColors.text}`}>
                           {driver.safetyScore}
                         </span>
+                        {allowScoreEdit && onUpdateScore && (
+                          <div className="flex flex-col gap-0.5 ml-1">
+                            <button
+                              onClick={() => onUpdateScore(driver, Math.max(0, Math.min(100, driver.safetyScore + 1)))}
+                              className="w-4 h-4 flex items-center justify-center rounded hover:bg-emerald-100 text-emerald-600 transition outline-none"
+                              title="Increase score by 1"
+                            >
+                              <ChevronUp size={10} />
+                            </button>
+                            <button
+                              onClick={() => onUpdateScore(driver, Math.max(0, Math.min(100, driver.safetyScore - 1)))}
+                              className="w-4 h-4 flex items-center justify-center rounded hover:bg-red-100 text-red-500 transition outline-none"
+                              title="Decrease score by 1"
+                            >
+                              <ChevronDownIcon size={10} />
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </td>
 
@@ -237,75 +260,77 @@ export default function DriverTable({
                       </span>
                     </td>
 
-                    {/* Row Menu Actions */}
-                    <td className="py-3.5 px-5 text-right relative" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        onClick={() => setActiveMenuRow(activeMenuRow === driver.licenseNumber ? null : driver.licenseNumber)}
-                        className="p-1.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition inline-flex outline-none"
-                        aria-label="View actions"
-                      >
-                        <MoreVertical size={14} />
-                      </button>
+                    {/* Row Menu Actions — hidden when hideActions=true */}
+                    {!hideActions && (
+                      <td className="py-3.5 px-5 text-right relative" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          onClick={() => setActiveMenuRow(activeMenuRow === driver.licenseNumber ? null : driver.licenseNumber)}
+                          className="p-1.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition inline-flex outline-none"
+                          aria-label="View actions"
+                        >
+                          <MoreVertical size={14} />
+                        </button>
 
-                      {activeMenuRow === driver.licenseNumber && (
-                        <>
-                          <div className="fixed inset-0 z-30" onClick={() => setActiveMenuRow(null)} />
-                          <div className="absolute right-5 mt-1 w-40 bg-white border border-[#E2E8F0] rounded-xl shadow-lg z-40 py-1 text-left overflow-hidden">
-                            <button
-                              onClick={() => {
-                                onSelectDriver(driver);
-                                setActiveMenuRow(null);
-                              }}
-                              className="w-full flex items-center px-3.5 py-2 hover:bg-slate-50 text-[#111827] font-medium text-xs transition gap-2"
-                            >
-                              <Eye size={13} className="text-slate-400" />
-                              View Profile
-                            </button>
-                            <button
-                              onClick={() => {
-                                onEditDriver(driver);
-                                setActiveMenuRow(null);
-                              }}
-                              className="w-full flex items-center px-3.5 py-2 hover:bg-slate-50 text-[#111827] font-medium text-xs transition gap-2"
-                            >
-                              <Edit size={13} className="text-slate-400" />
-                              Edit Profile
-                            </button>
-                            <button
-                              onClick={() => {
-                                onAssignTrip(driver);
-                                setActiveMenuRow(null);
-                              }}
-                              disabled={isExpired || driver.status === 'Suspended' || driver.status === 'On Trip'}
-                              className="w-full flex items-center px-3.5 py-2 hover:bg-slate-50 text-[#111827] font-medium text-xs transition gap-2 disabled:opacity-40 disabled:hover:bg-transparent"
-                            >
-                              <Play size={13} className="text-slate-400" />
-                              Assign Trip
-                            </button>
-                            <button
-                              onClick={() => {
-                                onSuspendDriver(driver);
-                                setActiveMenuRow(null);
-                              }}
-                              className="w-full flex items-center px-3.5 py-2 hover:bg-slate-50 text-[#111827] font-medium text-xs transition gap-2"
-                            >
-                              <Ban size={13} className="text-slate-400" />
-                              {driver.status === 'Suspended' ? 'Unsuspend' : 'Suspend'}
-                            </button>
-                            <button
-                              onClick={() => {
-                                onDeleteDriver(driver);
-                                setActiveMenuRow(null);
-                              }}
-                              className="w-full flex items-center px-3.5 py-2 hover:bg-red-50 text-red-600 font-semibold text-xs transition border-t border-slate-100 gap-2"
-                            >
-                              <Trash2 size={13} />
-                              Delete Profile
-                            </button>
-                          </div>
-                        </>
-                      )}
-                    </td>
+                        {activeMenuRow === driver.licenseNumber && (
+                          <>
+                            <div className="fixed inset-0 z-30" onClick={() => setActiveMenuRow(null)} />
+                            <div className="absolute right-5 mt-1 w-40 bg-white border border-[#E2E8F0] rounded-xl shadow-lg z-40 py-1 text-left overflow-hidden">
+                              <button
+                                onClick={() => {
+                                  onSelectDriver(driver);
+                                  setActiveMenuRow(null);
+                                }}
+                                className="w-full flex items-center px-3.5 py-2 hover:bg-slate-50 text-[#111827] font-medium text-xs transition gap-2"
+                              >
+                                <Eye size={13} className="text-slate-400" />
+                                View Profile
+                              </button>
+                              <button
+                                onClick={() => {
+                                  onEditDriver(driver);
+                                  setActiveMenuRow(null);
+                                }}
+                                className="w-full flex items-center px-3.5 py-2 hover:bg-slate-50 text-[#111827] font-medium text-xs transition gap-2"
+                              >
+                                <Edit size={13} className="text-slate-400" />
+                                Edit Profile
+                              </button>
+                              <button
+                                onClick={() => {
+                                  onAssignTrip && onAssignTrip(driver);
+                                  setActiveMenuRow(null);
+                                }}
+                                disabled={isExpired || driver.status === 'Suspended' || driver.status === 'On Trip'}
+                                className="w-full flex items-center px-3.5 py-2 hover:bg-slate-50 text-[#111827] font-medium text-xs transition gap-2 disabled:opacity-40 disabled:hover:bg-transparent"
+                              >
+                                <Play size={13} className="text-slate-400" />
+                                Assign Trip
+                              </button>
+                              <button
+                                onClick={() => {
+                                  onSuspendDriver(driver);
+                                  setActiveMenuRow(null);
+                                }}
+                                className="w-full flex items-center px-3.5 py-2 hover:bg-slate-50 text-[#111827] font-medium text-xs transition gap-2"
+                              >
+                                <Ban size={13} className="text-slate-400" />
+                                {driver.status === 'Suspended' ? 'Unsuspend' : 'Suspend'}
+                              </button>
+                              <button
+                                onClick={() => {
+                                  onDeleteDriver(driver);
+                                  setActiveMenuRow(null);
+                                }}
+                                className="w-full flex items-center px-3.5 py-2 hover:bg-red-50 text-red-600 font-semibold text-xs transition border-t border-slate-100 gap-2"
+                              >
+                                <Trash2 size={13} />
+                                Delete Profile
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 );
               })

@@ -6,6 +6,7 @@ import {
   Sparkles, ShieldAlert, ArrowUpRight, TrendingUp, HelpCircle, RotateCcw,
   Wrench, Calendar, XCircle, Search, Filter, ChevronDown, X, Clock
 } from 'lucide-react';
+import { formatCurrency, parseCurrency } from '../utils/parsers';
 import AnimatedCounter from './AnimatedCounter';
 
 // Import subcomponents
@@ -98,7 +99,7 @@ const MonthlyCostChart = ({ records }) => {
                 style={{ backgroundColor: item.color }}
               >
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-slate-800 text-white text-[8px] px-1 py-0.5 rounded opacity-0 hover:opacity-100 transition duration-150 pointer-events-none mb-1 font-mono whitespace-nowrap z-10">
-                  ${item.cost.toLocaleString()}
+                  {formatCurrency(item.cost)}
                 </div>
               </motion.div>
             </div>
@@ -247,8 +248,8 @@ export default function MaintenanceView() {
       workshop: formWorkshop,
       mechanic: formMechanic.trim(),
       priority: formPriority,
-      estimatedCost: parseInt(formEstCost, 10) || 0,
-      actualCost: formStatus === 'Completed' ? parseInt(formEstCost, 10) || 0 : null,
+      estimatedCost: parseCurrency(formEstCost) || 0,
+      actualCost: formStatus === 'Completed' ? parseCurrency(formEstCost) || 0 : null,
       startDate: formDate,
       expectedCompletion: formCompletion,
       status: formStatus,
@@ -402,9 +403,9 @@ export default function MaintenanceView() {
         <div className="bg-white p-4 rounded-2xl border border-[#E2E8F0] shadow-sm flex flex-col justify-between hover:shadow-md transition">
           <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">Total Cost</span>
           <h3 className="text-2xl font-bold font-space text-slate-800 mt-1.5">
-            ${totalCost.toLocaleString()}
+            {formatCurrency(totalCost)}
           </h3>
-          <span className="text-[9px] text-red-500 font-semibold mt-1">+$450 vs budget target</span>
+          <span className="text-[9px] text-red-500 font-semibold mt-1">+₹450 vs budget target</span>
         </div>
 
         {/* KPI 5: Avg Repair Time */}
@@ -657,7 +658,7 @@ export default function MaintenanceView() {
 
                 <div className="grid grid-cols-3 gap-3">
                   <div className="col-span-2">
-                    <label className="block text-slate-600 font-semibold mb-1">Estimated Cost ($) *</label>
+                    <label className="block text-slate-600 font-semibold mb-1">Estimated Cost (₹) *</label>
                     <input
                       type="number"
                       required
