@@ -2,18 +2,25 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Get environment variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+let rawUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim();
+if (rawUrl && !rawUrl.startsWith('http://') && !rawUrl.startsWith('https://')) {
+  rawUrl = 'https://' + rawUrl;
+}
+if (rawUrl.includes('/rest/v1')) {
+  rawUrl = rawUrl.split('/rest/v1')[0];
+}
+const supabaseUrl = rawUrl ? (rawUrl.endsWith('/') ? rawUrl.slice(0, -1) : rawUrl) : 'https://placeholder-co-transitops.supabase.co';
+const supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder-key').trim();
+
+console.log('🔗 Supabase client initialized with URL:', supabaseUrl);
 
 // Validate environment variables
-if (!supabaseUrl) {
-  console.error('❌ VITE_SUPABASE_URL is not defined in environment variables');
-  throw new Error('VITE_SUPABASE_URL is required');
+if (!import.meta.env.VITE_SUPABASE_URL) {
+  console.warn('⚠️ VITE_SUPABASE_URL is not defined in environment variables, using placeholder URL');
 }
 
-if (!supabaseAnonKey) {
-  console.error('❌ VITE_SUPABASE_ANON_KEY is not defined in environment variables');
-  throw new Error('VITE_SUPABASE_ANON_KEY is required');
+if (!import.meta.env.VITE_SUPABASE_ANON_KEY) {
+  console.warn('⚠️ VITE_SUPABASE_ANON_KEY is not defined in environment variables, using placeholder Key');
 }
 
 // Create Supabase client

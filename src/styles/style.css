@@ -1,9 +1,9 @@
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Nova+Round&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Nova+Round&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 /* Base styles */
 * {
@@ -121,30 +121,7 @@ body {
     @apply border-yellow-200;
   }
 
-  /* Enhanced text shadows for better readability */
-  .text-shadow-sm {
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  }
-
-  .text-shadow {
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  }
-
-  .text-shadow-md {
-    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
-  }
-
-  .text-shadow-lg {
-    text-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
-  }
-
-  .text-shadow-xl {
-    text-shadow: 0 20px 25px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.05);
-  }
-
-  .text-shadow-2xl {
-    text-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-  }
+  /* Custom text shadows removed to avoid PostCSS conflicts */
 
   /* Enhanced backdrop blur utilities */
   .backdrop-blur-xs {
@@ -231,25 +208,26 @@ body {
 
 /* Enhanced scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #F8FAFC;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #f59e0b, #d97706);
-  border-radius: 4px;
+  background: #CBD5E1;
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #d97706, #b45309);
+  background: #94A3B8;
 }
 
 /* Focus styles */
 *:focus {
-  outline: 2px solid #f59e0b;
+  outline: 2px solid #2563EB;
   outline-offset: 2px;
 }
 

@@ -10,13 +10,24 @@ export default {
     extend: {
       fontFamily: {
         'lilita': ['"Lilita One"', 'cursive'],
-        'sans': ['"Open Sans"', 'sans-serif'],
+        'sans': ['Inter', '"Open Sans"', 'sans-serif'],
         'nova': ['"Nova Round"', 'cursive'],
         'roboto': ['"Roboto"', 'sans-serif'],
         'inter': ['"Inter"', 'sans-serif'],
+        'space': ['"Space Grotesk"', 'sans-serif'],
       },
       colors: {
-        // Construction theme colors
+        primary: '#2563EB',
+        secondary: '#7C3AED',
+        success: '#22C55E',
+        warning: '#F59E0B',
+        danger: '#EF4444',
+        'enterprise-text': '#111827',
+        'enterprise-secondary': '#6B7280',
+        'enterprise-bg': '#F8FAFC',
+        'enterprise-border': '#E5E7EB',
+        'enterprise-sidebar': '#FFFFFF',
+        // Construction theme colors (keep for backward compatibility with old auth pages if they use them)
         'construction': {
           50: '#fefce8',
           100: '#fef9c3',
