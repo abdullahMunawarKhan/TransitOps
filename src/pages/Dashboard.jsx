@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, Truck, Users, Wrench, Fuel, BarChart3, Settings, 
   Clock, CheckCircle2, Activity, Navigation, ArrowUpRight 
@@ -17,11 +17,27 @@ import TripDetailDrawer from '../components/TripDetailDrawer';
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  
+  const location = useLocation();
+
   // Layout states
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [activeMenuTab, setActiveMenuTab] = useState('Dashboard');
+
+  // Sync state tab from route transitions
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveMenuTab(location.state.activeTab);
+    }
+  }, [location.state]);
+
+  const handleMenuTabChange = (tabName) => {
+    if (tabName === 'Fleet') {
+      navigate('/fleet');
+    } else {
+      setActiveMenuTab(tabName);
+    }
+  };
   
   // Interactive UI states
   const [searchQuery, setSearchQuery] = useState('');
@@ -296,7 +312,7 @@ export default function Dashboard() {
         isMobileSidebarOpen={isMobileSidebarOpen}
         setIsMobileSidebarOpen={setIsMobileSidebarOpen}
         activeMenuTab={activeMenuTab}
-        setActiveMenuTab={setActiveMenuTab}
+        setActiveMenuTab={handleMenuTabChange}
         handleLogout={handleLogout}
         menuItems={menuItems}
       />
@@ -318,7 +334,7 @@ export default function Dashboard() {
           deleteNotification={deleteNotification}
           handleLogout={handleLogout}
           onAddTrip={handleAddTrip}
-          setActiveMenuTab={setActiveMenuTab}
+          setActiveMenuTab={handleMenuTabChange}
         />
 
         {/* ACTIVE MAIN ROUTE CONTAINER */}
