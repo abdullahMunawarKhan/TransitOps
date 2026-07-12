@@ -1,31 +1,31 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
-  LayoutDashboard, Truck, Users, Wrench, Fuel, BarChart3, Settings, Navigation
+  LayoutDashboard, Truck, Users, Wrench, Fuel as FuelIcon, BarChart3, Settings, Navigation
 } from 'lucide-react';
 import { supabase } from '../utils/supabase';
 
 // Import modular components
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
-import TripsView from '../components/TripsView';
+import FuelExpensesView from '../components/FuelExpensesView';
 
-export default function Trips() {
+export default function Fuel() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Layout states
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-
+  
   // Interactive UI states
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-
+  
   // Notification states
   const [notifications, setNotifications] = useState([
     { id: 1, type: 'warning', text: 'Vehicle Cascadia #104 fuel level below 15%', time: '10m ago', unread: true },
-    { id: 2, type: 'danger', text: 'Trip TRIP-8405 cancelled by Dispatcher', time: '1h ago', unread: true },
-    { id: 3, type: 'info', text: 'New route optimized for Trip TRIP-8402', time: '3h ago', unread: false }
+    { id: 2, type: 'danger', text: 'Trip TRIP-8405 cancelled by Dispatcher', time: '1h ago', unread: true }
   ]);
 
   // Sidebar Menu Items definition
@@ -35,7 +35,7 @@ export default function Trips() {
     { name: 'Drivers', icon: Users, badge: '40' },
     { name: 'Trips', icon: Navigation, badge: '12' },
     { name: 'Maintenance', icon: Wrench, alert: true },
-    { name: 'Fuel & Expenses', icon: Fuel },
+    { name: 'Fuel & Expenses', icon: FuelIcon },
     { name: 'Analytics', icon: BarChart3 },
     { name: 'Settings', icon: Settings },
   ];
@@ -47,11 +47,11 @@ export default function Trips() {
       navigate('/fleet');
     } else if (tabName === 'Drivers') {
       navigate('/drivers');
+    } else if (tabName === 'Trips') {
+      navigate('/trips');
     } else if (tabName === 'Maintenance') {
       navigate('/maintenance');
-    } else if (tabName === 'Fuel & Expenses') {
-      navigate('/fuel');
-    } else if (tabName !== 'Trips') {
+    } else if (tabName !== 'Fuel & Expenses') {
       // Navigate to dashboard and trigger that tab view
       navigate('/dashboard', { state: { activeTab: tabName } });
     }
@@ -80,7 +80,7 @@ export default function Trips() {
         setIsSidebarCollapsed={setIsSidebarCollapsed}
         isMobileSidebarOpen={isMobileSidebarOpen}
         setIsMobileSidebarOpen={setIsMobileSidebarOpen}
-        activeMenuTab="Trips"
+        activeMenuTab="Fuel & Expenses"
         setActiveMenuTab={handleMenuClick}
         handleLogout={handleLogout}
         menuItems={menuItems}
@@ -102,19 +102,15 @@ export default function Trips() {
           markAllNotificationsRead={markAllNotificationsRead}
           deleteNotification={deleteNotification}
           handleLogout={handleLogout}
-          onAddTrip={() => {}} // already on dispatcher
+          onAddTrip={() => navigate('/dashboard')}
           setActiveMenuTab={handleMenuClick}
         />
 
         {/* ACTIVE MAIN ROUTE CONTAINER */}
         <main className="flex-1 p-4 md:p-8 space-y-6 overflow-y-auto max-w-[1600px] mx-auto w-full">
-          
-          {/* TRIP DISPATCH PANEL */}
-          <TripsView />
-
+          <FuelExpensesView />
         </main>
       </div>
-
     </div>
   );
 }

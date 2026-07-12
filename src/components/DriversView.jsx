@@ -111,7 +111,7 @@ const SafetyDistributionChart = ({ drivers }) => {
 
 export default function DriversView() {
   // 1. Initial State
-  const [drivers, setDrivers] = useState([
+  const defaultDrivers = [
     {
       name: 'Sarah Jenkins',
       licenseNumber: 'DL-84092-TX',
@@ -209,7 +209,18 @@ export default function DriversView() {
       address: '430 E 86th St, New York, NY',
       violations: []
     }
-  ]);
+  ];
+
+  const [drivers, setDrivers] = useState(() => {
+    const stored = localStorage.getItem('transitops.drivers');
+    if (stored) return JSON.parse(stored);
+    localStorage.setItem('transitops.drivers', JSON.stringify(defaultDrivers));
+    return defaultDrivers;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('transitops.drivers', JSON.stringify(drivers));
+  }, [drivers]);
 
   // 2. Filter states
   const [searchName, setSearchName] = useState('');

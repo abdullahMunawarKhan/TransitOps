@@ -49,6 +49,8 @@ export default function Maintenance() {
       navigate('/drivers');
     } else if (tabName === 'Trips') {
       navigate('/trips');
+    } else if (tabName === 'Fuel & Expenses') {
+      navigate('/fuel');
     } else if (tabName !== 'Maintenance') {
       // Navigate to dashboard and trigger that tab view
       navigate('/dashboard', { state: { activeTab: tabName } });

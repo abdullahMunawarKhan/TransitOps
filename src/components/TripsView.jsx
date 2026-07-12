@@ -81,53 +81,71 @@ const RoutingMap = ({ origin, destination, progress = 0 }) => {
 
 export default function TripsView() {
   // 1. Initial operational resources
-  const [vehicles] = useState([
-    { name: 'Freightliner Cascadia #104', type: 'Semi-Truck', capacity: 45000, status: 'On Trip' },
-    { name: 'Ford E-350 Cargo Van #203', type: 'Cargo Van', capacity: 9500, status: 'Available' },
-    { name: 'Tesla Semi #401', type: 'Electric Truck', capacity: 40000, status: 'Available' },
-    { name: 'Volvo VNL 860 #112', type: 'Semi-Truck', capacity: 45000, status: 'In Shop' },
-    { name: 'Peterbilt 579 #152', type: 'Semi-Truck', capacity: 44500, status: 'Available' },
-    { name: 'Ford E-350 Cargo Van #205', type: 'Cargo Van', capacity: 9500, status: 'On Trip' }
-  ]);
+  const [vehicles, setVehicles] = useState(() => {
+    const stored = localStorage.getItem('transitops.vehicles');
+    return stored ? JSON.parse(stored) : [
+      { regNumber: 'TX-1042-CS', name: 'Freightliner Cascadia #104', type: 'Semi-Truck', capacity: '45,000 lbs', odometer: '124,500 mi', cost: '$145,000', status: 'On Trip', driver: 'Sarah Jenkins', maintenanceLogs: [] },
+      { regNumber: 'CA-2038-VN', name: 'Ford E-350 Cargo Van #203', type: 'Cargo Van', capacity: '9,500 lbs', odometer: '85,200 mi', cost: '$48,500', status: 'Available', driver: 'Michael Chang', maintenanceLogs: [] },
+      { regNumber: 'CA-4010-EV', name: 'Tesla Semi #401', type: 'Electric Truck', capacity: '40,000 lbs', odometer: '12,400 mi', cost: '$180,000', status: 'Available', driver: 'David Miller', maintenanceLogs: [] },
+      { regNumber: 'FL-1120-VV', name: 'Volvo VNL 860 #112', type: 'Semi-Truck', capacity: '45,000 lbs', odometer: '210,350 mi', cost: '$152,000', status: 'In Shop', driver: 'Elena Rostova', maintenanceLogs: [] },
+      { regNumber: 'TX-1528-PB', name: 'Peterbilt 579 #152', type: 'Semi-Truck', capacity: '44,500 lbs', odometer: '198,400 mi', cost: '$138,000', status: 'Available', driver: 'Marcus Vance', maintenanceLogs: [] },
+      { regNumber: 'MA-2059-VN', name: 'Ford E-350 Cargo Van #205', type: 'Cargo Van', capacity: '9,500 lbs', odometer: '94,150 mi', cost: '$49,000', status: 'On Trip', driver: 'James O\'Connor', maintenanceLogs: [] }
+    ];
+  });
 
-  const [drivers] = useState([
-    { name: 'Sarah Jenkins', licenseCategory: 'A', licenseExpiry: '2027-08-12', safetyScore: 94, status: 'On Trip' },
-    { name: 'Michael Chang', licenseCategory: 'B', licenseExpiry: '2028-01-20', safetyScore: 89, status: 'Available' },
-    { name: 'David Miller', licenseCategory: 'A', licenseExpiry: '2026-07-24', safetyScore: 92, status: 'Available' },
-    { name: 'Elena Rostova', licenseCategory: 'A', licenseExpiry: '2025-05-18', safetyScore: 68, status: 'Available' }, // Expired license
-    { name: 'Marcus Vance', licenseCategory: 'A', licenseExpiry: '2026-10-15', safetyScore: 95, status: 'Suspended' }, // Suspended
-    { name: 'James O\'Connor', licenseCategory: 'B', licenseExpiry: '2027-11-05', safetyScore: 84, status: 'On Trip' }
-  ]);
+  const [drivers, setDrivers] = useState(() => {
+    const stored = localStorage.getItem('transitops.drivers');
+    return stored ? JSON.parse(stored) : [
+      { name: 'Sarah Jenkins', licenseCategory: 'A', licenseExpiry: '2027-08-12', safetyScore: 94, status: 'On Trip', licenseNumber: 'DL-84092-TX', phone: '+1 (555) 234-5678' },
+      { name: 'Michael Chang', licenseCategory: 'B', licenseExpiry: '2028-01-20', safetyScore: 89, status: 'Available', licenseNumber: 'DL-20385-CA', phone: '+1 (555) 876-5432' },
+      { name: 'David Miller', licenseCategory: 'A', licenseExpiry: '2026-07-24', safetyScore: 92, status: 'Available', licenseNumber: 'DL-40104-IL', phone: '+1 (555) 345-6789' },
+      { name: 'Elena Rostova', licenseCategory: 'A', licenseExpiry: '2025-05-18', safetyScore: 68, status: 'Available', licenseNumber: 'DL-11204-FL', phone: '+1 (555) 456-7890' },
+      { name: 'Marcus Vance', licenseCategory: 'A', licenseExpiry: '2026-10-15', safetyScore: 95, status: 'Suspended', licenseNumber: 'DL-15284-TX', phone: '+1 (555) 901-2345' },
+      { name: 'James O\'Connor', licenseCategory: 'B', licenseExpiry: '2027-11-05', safetyScore: 84, status: 'On Trip', licenseNumber: 'DL-20594-NY', phone: '+1 (555) 789-0123' }
+    ];
+  });
 
   // 2. Mock Active Board Trips
-  const [activeTrips, setActiveTrips] = useState([
-    {
-      id: 'TRIP-8402',
-      cargo: 'Electronics (High Value)',
-      origin: 'Atlanta, GA',
-      destination: 'Charlotte, NC',
-      vehicle: 'Freightliner Cascadia #104',
-      driver: 'Sarah Jenkins',
-      status: 'In Progress',
-      priority: 'High',
-      progress: 65,
-      eta: 'Today, 4:30 PM',
-      location: 'Route I-85 North (Mile 142)'
-    },
-    {
-      id: 'TRIP-8407',
-      cargo: 'E-commerce Packages',
-      origin: 'New York, NY',
-      destination: 'Boston, MA',
-      vehicle: 'Ford E-350 Cargo Van #205',
-      driver: 'James O\'Connor',
-      status: 'Dispatched',
-      priority: 'Medium',
-      progress: 25,
-      eta: 'Today, 6:15 PM',
-      location: 'Route I-95 North (Mile 45)'
-    }
-  ]);
+  const [activeTrips, setActiveTrips] = useState(() => {
+    const stored = localStorage.getItem('transitops.trips');
+    if (stored) return JSON.parse(stored);
+    const defaultTrips = [
+      {
+        id: 'TRIP-8402',
+        cargo: 'Electronics (High Value)',
+        origin: 'Atlanta, GA',
+        destination: 'Charlotte, NC',
+        vehicle: 'Freightliner Cascadia #104',
+        driver: 'Sarah Jenkins',
+        status: 'In Progress',
+        priority: 'High',
+        progress: 65,
+        eta: 'Today, 4:30 PM',
+        location: 'Route I-85 North (Mile 142)',
+        distance: '245 mi'
+      },
+      {
+        id: 'TRIP-8407',
+        cargo: 'E-commerce Packages',
+        origin: 'New York, NY',
+        destination: 'Boston, MA',
+        vehicle: 'Ford E-350 Cargo Van #205',
+        driver: 'James O\'Connor',
+        status: 'Dispatched',
+        priority: 'Medium',
+        progress: 25,
+        eta: 'Today, 6:15 PM',
+        location: 'Route I-95 North (Mile 45)',
+        distance: '215 mi'
+      }
+    ];
+    localStorage.setItem('transitops.trips', JSON.stringify(defaultTrips));
+    return defaultTrips;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('transitops.trips', JSON.stringify(activeTrips));
+  }, [activeTrips]);
 
   // 3. Form input states
   const [formSource, setFormSource] = useState('');
@@ -139,6 +157,7 @@ export default function TripsView() {
   const [formFuel, setFormFuel] = useState('');
   const [formPriority, setFormPriority] = useState('Medium');
   const [formCargo, setFormCargo] = useState('');
+  const [formDistance, setFormDistance] = useState('');
 
   // 4. Stepper control states (Draft, Dispatched, In Progress, Completed, Cancelled)
   const [stepperStage, setStepperStage] = useState('Draft');

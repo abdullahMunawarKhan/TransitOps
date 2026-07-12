@@ -157,7 +157,7 @@ const MileageChart = () => {
 
 export default function FleetView() {
   // 1. Initial State
-  const [vehicles, setVehicles] = useState([
+  const defaultVehicles = [
     { 
       regNumber: 'TX-1042-CS', 
       name: 'Freightliner Cascadia #104', 
@@ -170,6 +170,13 @@ export default function FleetView() {
       maintenanceLogs: [
         { type: 'Engine Oil Service', cost: '$380', date: '2026-05-10', description: 'Replaced full engine oil and filters' },
         { type: 'Brake Pad Replacement', cost: '$650', date: '2026-03-12', description: 'Rear wheels brake pads replacement' }
+      ],
+      fuelLogs: [
+        { liters: 340, cost: 510, date: '2026-06-15' },
+        { liters: 410, cost: 620, date: '2026-07-02' }
+      ],
+      otherExpenses: [
+        { type: 'Toll Charge', cost: 45, date: '2026-07-02', description: 'I-85 Express Lane' }
       ]
     },
     { 
@@ -183,6 +190,13 @@ export default function FleetView() {
       driver: 'Michael Chang',
       maintenanceLogs: [
         { type: 'Standard Tune-up', cost: '$120', date: '2026-04-01', description: 'General fluid top-up and tyre inspection' }
+      ],
+      fuelLogs: [
+        { liters: 95, cost: 135, date: '2026-06-18' },
+        { liters: 110, cost: 160, date: '2026-07-05' }
+      ],
+      otherExpenses: [
+        { type: 'State Toll', cost: 12, date: '2026-07-05', description: 'Highway 101 Toll' }
       ]
     },
     { 
@@ -192,9 +206,13 @@ export default function FleetView() {
       capacity: '40,000 lbs', 
       odometer: '12,400 mi', 
       cost: '$180,000', 
-      status: 'Pending', 
+      status: 'Available', 
       driver: 'David Miller',
-      maintenanceLogs: []
+      maintenanceLogs: [],
+      fuelLogs: [
+        { liters: 0, cost: 0, date: '2026-07-08' } // Electric truck has no fuel cost
+      ],
+      otherExpenses: []
     },
     { 
       regNumber: 'FL-1120-VV', 
@@ -207,7 +225,11 @@ export default function FleetView() {
       driver: 'Elena Rostova',
       maintenanceLogs: [
         { type: 'Alternator Repair', cost: '$820', date: '2026-07-09', description: 'Replaced failed alternator and battery unit' }
-      ]
+      ],
+      fuelLogs: [
+        { liters: 320, cost: 480, date: '2026-06-25' }
+      ],
+      otherExpenses: []
     },
     { 
       regNumber: 'TX-1528-PB', 
@@ -216,9 +238,13 @@ export default function FleetView() {
       capacity: '44,500 lbs', 
       odometer: '198,400 mi', 
       cost: '$138,000', 
-      status: 'Draft', 
+      status: 'Available', 
       driver: 'Marcus Vance',
-      maintenanceLogs: []
+      maintenanceLogs: [],
+      fuelLogs: [
+        { liters: 280, cost: 410, date: '2026-07-01' }
+      ],
+      otherExpenses: []
     },
     { 
       regNumber: 'MA-2059-VN', 
@@ -231,9 +257,28 @@ export default function FleetView() {
       driver: 'James O\'Connor',
       maintenanceLogs: [
         { type: 'Wheel Alignment', cost: '$180', date: '2026-02-28', description: 'Realigned front axles' }
+      ],
+      fuelLogs: [
+        { liters: 120, cost: 175, date: '2026-06-12' },
+        { liters: 105, cost: 155, date: '2026-07-01' }
+      ],
+      otherExpenses: [
+        { type: 'Bridge Toll', cost: 8, date: '2026-07-02', description: 'Boston Bridge Toll' }
       ]
     }
-  ]);
+  ];
+
+  const [vehicles, setVehicles] = useState(() => {
+    const stored = localStorage.getItem('transitops.vehicles');
+    if (stored) return JSON.parse(stored);
+    localStorage.setItem('transitops.vehicles', JSON.stringify(defaultVehicles));
+    return defaultVehicles;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('transitops.vehicles', JSON.stringify(vehicles));
+  }, [vehicles]);
+
 
   // 2. Filter states
   const [searchReg, setSearchReg] = useState('');

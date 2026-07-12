@@ -8,6 +8,18 @@ import {
 export default function VehicleDrawer({ vehicle, onClose }) {
   if (!vehicle) return null;
 
+  const parseAmt = (val) => {
+    if (typeof val === 'number') return val;
+    if (!val) return 0;
+    const cleaned = val.replace(/[^0-9.]/g, '');
+    return parseFloat(cleaned) || 0;
+  };
+
+  const maintTotal = (vehicle.maintenanceLogs || []).reduce((acc, log) => acc + parseAmt(log.cost), 0);
+  const fuelTotal = (vehicle.fuelLogs || []).reduce((acc, log) => acc + parseAmt(log.cost), 0);
+  const otherTotal = (vehicle.otherExpenses || []).reduce((acc, log) => acc + parseAmt(log.cost), 0);
+  const grandTotal = maintTotal + fuelTotal + otherTotal;
+
   // Render SVG illustration representing the vehicle category
   const renderVehicleIllustration = (type) => {
     switch (type) {
@@ -170,12 +182,42 @@ export default function VehicleDrawer({ vehicle, onClose }) {
                     <span className="text-[10px] text-slate-500">Trips Completed</span>
                   </div>
                   <div className="p-3 bg-slate-50 border border-[#E2E8F0] rounded-xl">
-                    <div className="text-lg font-bold text-slate-800 font-space">8.2k</div>
-                    <span className="text-[10px] text-slate-500">Gallons Fuel</span>
+                    <div className="text-lg font-bold text-slate-800 font-space">
+                      {vehicle.type === 'Electric Truck' ? '0' : '8.2k'}
+                    </div>
+                    <span className="text-[10px] text-slate-500">
+                      {vehicle.type === 'Electric Truck' ? 'kWh Charge' : 'Gallons Fuel'}
+                    </span>
                   </div>
                   <div className="p-3 bg-slate-50 border border-[#E2E8F0] rounded-xl">
                     <div className="text-lg font-bold text-slate-800 font-space">98%</div>
                     <span className="text-[10px] text-slate-500">On-Time Rate</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Operational Costs breakdown */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                  <Fuel size={14} className="text-slate-400" />
+                  <span>Operational Costs</span>
+                </div>
+                <div className="p-3.5 border border-[#E2E8F0] rounded-xl bg-slate-50/20 text-xs space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#64748B]">Fuel/Charging Expenses:</span>
+                    <span className="font-semibold text-slate-800 font-mono">${fuelTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#64748B]">Maintenance Expenses:</span>
+                    <span className="font-semibold text-slate-800 font-mono">${maintTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#64748B]">Tolls & Other Expenses:</span>
+                    <span className="font-semibold text-slate-800 font-mono">${otherTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                  </div>
+                  <div className="flex justify-between items-center pt-2 border-t border-slate-200">
+                    <span className="font-bold text-slate-900">Total Operational Cost:</span>
+                    <span className="font-extrabold text-emerald-600 font-mono text-sm">${grandTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                   </div>
                 </div>
               </div>

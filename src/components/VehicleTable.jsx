@@ -5,6 +5,21 @@ import {
   Trash2, Edit, Calendar, History, Eye
 } from 'lucide-react';
 
+export const getOperationalCost = (vehicle) => {
+  const parseAmt = (val) => {
+    if (typeof val === 'number') return val;
+    if (!val) return 0;
+    const cleaned = val.replace(/[^0-9.]/g, '');
+    return parseFloat(cleaned) || 0;
+  };
+
+  const maintTotal = (vehicle.maintenanceLogs || []).reduce((acc, log) => acc + parseAmt(log.cost), 0);
+  const fuelTotal = (vehicle.fuelLogs || []).reduce((acc, log) => acc + parseAmt(log.cost), 0);
+  const otherTotal = (vehicle.otherExpenses || []).reduce((acc, log) => acc + parseAmt(log.cost), 0);
+
+  return maintTotal + fuelTotal + otherTotal;
+};
+
 export default function VehicleTable({
   vehicles,
   onSelectVehicle,
@@ -85,6 +100,9 @@ export default function VehicleTable({
     } else if (sortField === 'capacity') {
       valA = parseInt(String(a[sortField]).replace(/[^0-9]/g, ''), 10) || 0;
       valB = parseInt(String(b[sortField]).replace(/[^0-9]/g, ''), 10) || 0;
+    } else if (sortField === 'opsCost') {
+      valA = getOperationalCost(a);
+      valB = getOperationalCost(b);
     }
 
     if (valA < valB) return sortAsc ? -1 : 1;
@@ -149,7 +167,15 @@ export default function VehicleTable({
                   onClick={() => handleSort('cost')}
                   className="flex items-center gap-1.5 hover:text-slate-800 outline-none"
                 >
-                  Cost <ArrowUpDown size={12} />
+                  Acq. Cost <ArrowUpDown size={12} />
+                </button>
+              </th>
+              <th className="py-3 px-5 sticky top-0 bg-white">
+                <button 
+                  onClick={() => handleSort('opsCost')}
+                  className="flex items-center gap-1.5 hover:text-slate-800 outline-none"
+                >
+                  Ops Cost <ArrowUpDown size={12} />
                 </button>
               </th>
               <th className="py-3 px-5 sticky top-0 bg-white">
@@ -167,7 +193,7 @@ export default function VehicleTable({
           <tbody className="divide-y divide-[#E2E8F0] text-xs">
             {paginatedVehicles.length === 0 ? (
               <tr>
-                <td colSpan="8" className="py-12 text-center text-slate-500 font-medium">
+                <td colSpan="9" className="py-12 text-center text-slate-500 font-medium">
                   No vehicles found matching the filter criteria.
                 </td>
               </tr>
@@ -175,6 +201,7 @@ export default function VehicleTable({
               paginatedVehicles.map((vehicle, idx) => {
                 const badge = getStatusBadge(vehicle.status);
                 const IconComponent = badge.icon;
+                const opsCost = getOperationalCost(vehicle);
                 
                 return (
                   <tr
@@ -212,6 +239,11 @@ export default function VehicleTable({
                     {/* Cost */}
                     <td className="py-3.5 px-5 text-[#111827] font-medium font-mono">
                       {vehicle.cost}
+                    </td>
+
+                    {/* Operational Cost */}
+                    <td className="py-3.5 px-5 text-emerald-600 font-bold font-mono">
+                      ${opsCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </td>
                     
                     {/* Status badge pill */}

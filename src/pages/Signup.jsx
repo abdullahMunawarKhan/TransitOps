@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { supabase } from '../utils/supabase';
 import { useNavigate } from 'react-router-dom';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
 function Signup() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [role, setRole] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -15,10 +16,21 @@ function Signup() {
 
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+  const getUsersFromStorage = () => {
+    const storedUsers = localStorage.getItem('transitops.users');
+    return storedUsers ? JSON.parse(storedUsers) : [];
+  };
+
+  const saveUserToStorage = (user) => {
+    const storedUsers = getUsersFromStorage();
+    storedUsers.push(user);
+    localStorage.setItem('transitops.users', JSON.stringify(storedUsers));
+  };
+
   const handleSignup = async () => {
     setMessage({ text: '', type: '' });
 
-    if (!email || !password || !confirmPassword) {
+    if (!name || !email || !role || !password || !confirmPassword) {
       return setMessage({ text: 'All fields are required.', type: 'error' });
     }
 
@@ -34,47 +46,31 @@ function Signup() {
       return setMessage({ text: 'Passwords do not match.', type: 'error' });
     }
 
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signUp({ email, password });
-      
-      if (error) {
-        // Safe developer fallback for 429 Rate Limits
-        if (error.status === 429 || error.message?.includes('rate limit') || error.message?.includes('Too Many Requests')) {
-          setMessage({ 
-            text: '⚠️ Supabase rate limit exceeded. Auto-generating offline demo session and redirecting you...', 
-            type: 'success' 
-          });
-          localStorage.setItem('supabase.auth.token', JSON.stringify({
-            currentSession: {
-              access_token: 'mock-token',
-              user: { email: email, role: 'authenticated' }
-            }
-          }));
-          setTimeout(() => navigate('/dashboard'), 2000);
-          return;
-        }
-        return setMessage({ 
-          text: `${error.message}. You can proceed using the demo bypass button below.`, 
-          type: 'error',
-          allowBypass: true
-        });
-      }
-
-      setMessage({ 
-        text: '✅ Account created! Please check your email to confirm your account before logging in. Redirecting...', 
-        type: 'success' 
-      });
-      setTimeout(() => navigate('/login'), 3000);
-    } catch (error) {
-      setMessage({ 
-        text: 'An unexpected error occurred. You can proceed using the demo bypass button below.', 
-        type: 'error',
-        allowBypass: true
-      });
-    } finally {
-      setLoading(false);
+    // Check if email already exists
+    const storedUsers = getUsersFromStorage();
+    const emailExists = storedUsers.some(u => u.email === email);
+    if (emailExists) {
+      return setMessage({ text: 'Email already registered.', type: 'error' });
     }
+
+    setLoading(true);
+    
+    // Save new user to localStorage
+    const newUser = {
+      name,
+      email,
+      role,
+      password
+    };
+    saveUserToStorage(newUser);
+
+    setMessage({ 
+      text: '✅ Account created! Redirecting to login...', 
+      type: 'success' 
+    });
+    setTimeout(() => navigate('/login'), 2000);
+
+    setLoading(false);
   };
 
   return (
@@ -119,17 +115,23 @@ function Signup() {
                   </svg>
                   <span>{message.text}</span>
                 </div>
-                {message.allowBypass && (
-                  <button
-                    type="button"
-                    onClick={() => navigate('/dashboard')}
-                    className="text-xs font-bold text-blue-600 hover:text-blue-800 underline self-start transition-colors duration-150"
-                  >
-                    Bypass Authentication & View Dashboard →
-                  </button>
-                )}
               </div>
             )}
+
+            {/* Name */}
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                Full Name
+              </label>
+              <input
+                id="name"
+                type="text"
+                placeholder="Enter your name"
+                className="w-full px-4 py-3 rounded-xl bg-white/70 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
 
             {/* Email */}
             <div>
@@ -144,6 +146,23 @@ function Signup() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
+            </div>
+
+            {/* Role */}
+            <div>
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+                Role
+              </label>
+              <select
+                id="role"
+                className="w-full px-4 py-3 rounded-xl bg-white/70 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+              >
+                <option value="">Select your role</option>
+                <option value="fleet">Fleet Manager</option>
+                <option value="dispatcher">Dispatcher</option>
+              </select>
             </div>
 
             {/* Password */}

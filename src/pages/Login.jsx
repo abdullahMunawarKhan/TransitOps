@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../utils/supabase';
 import { useNavigate } from 'react-router-dom';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+
+// Static credentials
+const staticUsers = [
+  { email: 'dispatcher@gmail.com', password: 'password', role: 'dispatcher', name: 'Dispatcher' },
+  { email: 'admin@gmail.com', password: 'password', role: 'admin', name: 'Admin' },
+  { email: 'fleet@gmail.com', password: 'password', role: 'fleet', name: 'Fleet Manager' }
+];
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -10,13 +16,16 @@ function Login() {
   const [errorEmail, setErrorEmail] = useState('');
   const [errorPassword, setErrorPassword] = useState('');
   const [loginError, setLoginError] = useState('');
-  // const [showForgotModal, setShowForgotModal] = useState(false);
   const [resetStatus, setResetStatus] = useState('');
-  // const [isSending, setIsSending] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const navigate = useNavigate();
+
+  const getUsersFromStorage = () => {
+    const storedUsers = localStorage.getItem('transitops.users');
+    return storedUsers ? JSON.parse(storedUsers) : [];
+  };
 
   const handleLogin = async () => {
     setErrorEmail('');
@@ -40,34 +49,37 @@ function Login() {
       return;
     }
 
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    // Get all users (static + stored)
+    const storedUsers = getUsersFromStorage();
+    const allUsers = [...staticUsers, ...storedUsers];
 
-      if (error) {
-        if (error.status === 429 || error.message?.includes('rate limit') || error.message?.includes('Too Many Requests')) {
-          setLoginError('⚠️ Supabase rate limit exceeded. Logging in as Offline Demo...');
-          localStorage.setItem('supabase.auth.token', JSON.stringify({
-            currentSession: {
-              access_token: 'mock-token',
-              user: { email: email, role: 'authenticated' }
-            }
-          }));
-          setTimeout(() => navigate('/dashboard'), 1500);
-          return;
+    // Check if user exists and password matches
+    const user = allUsers.find(u => u.email === email && u.password === password);
+
+    if (user) {
+      // Store session
+      localStorage.setItem('supabase.auth.token', JSON.stringify({
+        currentSession: {
+          access_token: 'mock-token',
+          user: { email: user.email, role: user.role, name: user.name }
         }
-        if (error?.message === 'Invalid login credentials') {
-          setLoginError('Account not found, please sign up first.');
+      }));
+      setTimeout(() => {
+        if (user.role === 'admin') {
+          navigate('/admin-dashboard');
+        } else if (user.role === 'fleet') {
+          navigate('/fleet-dashboard');
+        } else if (user.role === 'dispatcher') {
+          navigate('/dispatcher-dashboard');
         } else {
-          setLoginError(error.message || 'Login failed.');
+          navigate('/dashboard');
         }
-      } else if (data?.user) {
-        navigate('/dashboard');
-      }
-    } catch (error) {
-      setLoginError('An unexpected error occurred. Please try again.');
-    } finally {
-      setIsLoading(false);
+      }, 1500);
+    } else {
+      setLoginError('Invalid email or password.');
     }
+
+    setIsLoading(false);
   };
 
   // const handleResetPassword = async () => {
