@@ -257,6 +257,20 @@ export default function MaintenanceView() {
 
     setRecords([newRecord, ...records]);
     setIsAddOpen(false);
+
+    // Sync vehicle status
+    const storedVehicles = JSON.parse(localStorage.getItem('transitops.vehicles') || '[]');
+    const newVehicles = storedVehicles.map(v => {
+      if (v.name === newRecord.vehicle) {
+        if (newRecord.status === 'In Progress' || newRecord.status === 'Scheduled') {
+          return { ...v, status: 'In Shop' };
+        } else if (newRecord.status === 'Completed' && v.status !== 'Retired') {
+          return { ...v, status: 'Available' };
+        }
+      }
+      return v;
+    });
+    localStorage.setItem('transitops.vehicles', JSON.stringify(newVehicles));
   };
 
   // Status transition callback
@@ -284,6 +298,22 @@ export default function MaintenanceView() {
       return r;
     });
     setRecords(updated);
+    
+    // Sync vehicle status
+    const storedVehicles = JSON.parse(localStorage.getItem('transitops.vehicles') || '[]');
+    const newVehicles = storedVehicles.map(v => {
+      if (v.name === record.vehicle) {
+        if (nextStatus === 'Completed' || nextStatus === 'Cancelled') {
+          if (v.status !== 'Retired') {
+            return { ...v, status: 'Available' };
+          }
+        } else if (nextStatus === 'In Progress' || nextStatus === 'Scheduled') {
+          return { ...v, status: 'In Shop' };
+        }
+      }
+      return v;
+    });
+    localStorage.setItem('transitops.vehicles', JSON.stringify(newVehicles));
     
     // Sync detailed drawer view if open
     if (selectedRecord?.id === record.id) {

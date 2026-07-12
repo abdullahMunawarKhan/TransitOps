@@ -205,7 +205,8 @@ export default function TripsView() {
     
     // Weight limits check
     const weightVal = parseFloat(formWeight) || 0;
-    const capacityOk = vMatch ? weightVal <= vMatch.capacity : false;
+    const capacityNum = vMatch ? parseInt(String(vMatch.capacity).replace(/[^0-9]/g, ''), 10) || 0 : 0;
+    const capacityOk = vMatch ? weightVal <= capacityNum : false;
 
     setValidations({
       vehicleAvailable: vehicleOk,
@@ -474,11 +475,13 @@ export default function TripsView() {
                     className="w-full appearance-none bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl py-2 px-3 pr-10 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
                   >
                     <option value="">Choose vehicle...</option>
-                    {vehicles.map(v => (
-                      <option key={v.name} value={v.name}>
-                        {v.name} ({v.type} | Max: {v.capacity.toLocaleString()} lbs | Status: {v.status})
-                      </option>
-                    ))}
+                    {vehicles
+                      .filter(v => v.status === 'Available')
+                      .map(v => (
+                        <option key={v.name} value={v.name}>
+                          {v.name} ({v.type} | Max: {v.capacity.toLocaleString()} lbs | Status: {v.status})
+                        </option>
+                      ))}
                   </select>
                   <ChevronDown size={14} className="absolute right-3 top-2.5 pointer-events-none text-slate-400" />
                 </div>
@@ -494,11 +497,13 @@ export default function TripsView() {
                     className="w-full appearance-none bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl py-2 px-3 pr-10 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
                   >
                     <option value="">Choose driver...</option>
-                    {drivers.map(d => (
-                      <option key={d.name} value={d.name}>
-                        {d.name} (Class {d.licenseCategory} | Score: {d.safetyScore} | Status: {d.status})
-                      </option>
-                    ))}
+                    {drivers
+                      .filter(d => d.status === 'Available' && new Date(d.licenseExpiry) > new Date())
+                      .map(d => (
+                        <option key={d.name} value={d.name}>
+                          {d.name} (Class {d.licenseCategory} | Score: {d.safetyScore} | Status: {d.status})
+                        </option>
+                      ))}
                   </select>
                   <ChevronDown size={14} className="absolute right-3 top-2.5 pointer-events-none text-slate-400" />
                 </div>

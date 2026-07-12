@@ -533,7 +533,7 @@ export default function AdminDashboard() {
                   cost: `$${data.fuelCost}`,
                   [v.type === 'Electric Truck' ? 'kWh' : 'liters']: data.fuel
                 }];
-                return { ...v, status: 'In Shop', odometer: data.odometer, driver: '', fuelLogs: updatedLogs };
+                return { ...v, status: 'Available', odometer: data.odometer, driver: '', fuelLogs: updatedLogs };
               }
               return v;
             });
@@ -551,21 +551,50 @@ export default function AdminDashboard() {
           }
         }}
         onCancelTrip={() => {
+          const tripId = selectedTrip.id;
           const updatedTrips = trips.map(t => {
-            if (t.id === selectedTrip.id) {
+            if (t.id === tripId) {
               return { ...t, status: 'Cancelled', routeProgress: 0, speed: '0 mph' };
             }
             return t;
           });
           setTrips(updatedTrips);
-          setSelectedTrip({ ...selectedTrip, status: 'Cancelled', routeProgress: 0, speed: '0 mph' });
+          setSelectedTrip(null);
           setNotifications([{
             id: Date.now(),
-            type: 'danger',
-            text: `Trip ${selectedTrip.id} cancelled manually`,
+            type: 'warning',
+            text: `Trip ${tripId} cancelled`,
             time: 'Just now',
             unread: true
           }, ...notifications]);
+
+          // Sync trips
+          const storedTrips = JSON.parse(localStorage.getItem('transitops.trips') || '[]');
+          const newStoredTrips = storedTrips.map(t => t.id === tripId ? { ...t, status: 'Cancelled' } : t);
+          localStorage.setItem('transitops.trips', JSON.stringify(newStoredTrips));
+
+          // Sync vehicle
+          const storedVehicles = JSON.parse(localStorage.getItem('transitops.vehicles') || '[]');
+          const tripDetails = trips.find(t => t.id === tripId);
+          if (tripDetails) {
+            const newVehicles = storedVehicles.map(v => {
+              if (v.name === tripDetails.vehicle) {
+                return { ...v, status: 'Available', driver: '' };
+              }
+              return v;
+            });
+            localStorage.setItem('transitops.vehicles', JSON.stringify(newVehicles));
+
+            // Sync driver
+            const storedDrivers = JSON.parse(localStorage.getItem('transitops.drivers') || '[]');
+            const newDrivers = storedDrivers.map(d => {
+              if (d.name === tripDetails.driver) {
+                return { ...d, status: 'Available', currentVehicle: '' };
+              }
+              return d;
+            });
+            localStorage.setItem('transitops.drivers', JSON.stringify(newDrivers));
+          }
         }}
       />
 
